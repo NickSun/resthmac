@@ -1,9 +1,12 @@
 <?php
 namespace RestHmac\Client;
 
-
 use RestHmac\HmacAuthenticate\HmacAuthenticate;
 
+/**
+ * Class Client
+ * @package RestHmac\Client
+ */
 class Client
 {
     protected $client;
