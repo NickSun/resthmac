@@ -10,7 +10,8 @@
     }
   ],
   "require": {
-    "php": ">=5.5"
+    "php": ">=5.5",
+    "guzzle/guzzle": "~3.7"
   },
   "autoload": {
     "psr-0": {
