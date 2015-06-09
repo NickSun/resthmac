@@ -1,0 +1,20 @@
+{
+  "name": "nicksun/resthmac",
+  "type": "library",
+  "description": "Secure RESTful API",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Andrey Nikonov",
+      "email": "andrei.nikonov.v@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.5"
+  },
+  "autoload": {
+    "psr-0": {
+      "RestHmac": "/src"
+    }
+  }
+}
