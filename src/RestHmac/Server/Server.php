@@ -28,6 +28,10 @@ class Server
 
     public function checkAccess()
     {
+        if (is_null($this->hmac)) {
+            throw new \Exception('Private key does not set.');
+        }
+
         $data = $this->request->getData();
 
         if (time() - $data['timestamp'] > self::LAG) {
