@@ -40,7 +40,7 @@ class Server
 
         $hash = $this->hmac->generate($data);
 
-        if ($hash !== $data['X-Hash']) {
+        if ($hash !== $data['hash']) {
             return false;
         }
 
