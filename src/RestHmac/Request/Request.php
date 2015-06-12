@@ -43,6 +43,7 @@ class Request
                 $data = $_GET;
                 break;
             case 'PUT':
+            case 'DELETE':
                 $putdata = file_get_contents('php://input');
                 $exploded = explode('&', $putdata);
 
@@ -54,7 +55,7 @@ class Request
                 }
 
                 break;
-            case 'DELETE':
+            default:
                 $data = [];
                 break;
         }

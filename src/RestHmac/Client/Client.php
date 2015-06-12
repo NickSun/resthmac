@@ -14,7 +14,7 @@ class Client
 
     public function __construct($apiEndPoint, $publicKey, $privateKey)
     {
-        $this->client = new \GuzzleHttp\Client($apiEndPoint);
+        $this->client = new \GuzzleHttp\Client(['base_uri' => $apiEndPoint]);
         $this->hmac = new HmacAuthenticate($privateKey);
         $this->headers['X-Client-Id'] = $publicKey;
     }
@@ -30,7 +30,7 @@ class Client
 
         $this->headers['X-Hash'] = $this->hmac->generate($data);
 
-        $response = $this->client->post('user', $this->headers, $postData);
+        $response = $this->client->post('user', ['headers'  => $this->headers, 'form_params' => $postData]);
 
         if (202 == $response->getStatusCode()) {
             return true;
