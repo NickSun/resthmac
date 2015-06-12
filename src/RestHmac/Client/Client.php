@@ -25,8 +25,6 @@ class Client
         $timestamp = time();
         $this->headers['X-Timestamp'] = $timestamp;
         $data['timestamp'] = $timestamp;
-        $data['method'] = 'POST';
-        $data['host'] = $_SERVER['SERVER_NAME'];
 
         $this->headers['X-Hash'] = $this->hmac->generate($data);
 

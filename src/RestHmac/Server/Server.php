@@ -40,7 +40,7 @@ class Server
 
         $hash = $this->hmac->generate($data);
 
-        if ($hash !== $this->request->getHeader('X-Hash')) {
+        if ($hash !== $data['X-Hash']) {
             return false;
         }
 

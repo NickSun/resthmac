@@ -60,9 +60,8 @@ class Request
                 break;
         }
 
-        $data['method'] = $_SERVER['REQUEST_METHOD'];
-        $data['host'] = $_SERVER['HTTP_HOST'];
         $data['timestamp'] = $this->getHeader('X-Timestamp');
+        $data['hash'] = $this->getHeader('X-Hash');
 
         return $data;
     }
