@@ -75,17 +75,19 @@ class Request
      */
     public function encodeData(array $data)
     {
-        foreach ($data as &$key => &$value) {
-            $key = base64_encode($key);
+        $result = [];
 
+        foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $value = $this->encodeData($value);
+                $encodedValue = $this->encodeData($value);
             } else {
-                $value = base64_encode($value);
+                $encodedValue = base64_encode($value);
             }
+
+            $result[base64_encode($key)] = $encodedValue;
         }
 
-        return $data;
+        return $result;
     }
 
     /**
@@ -94,17 +96,19 @@ class Request
      */
     public function decodeData(array $data)
     {
-        foreach ($data as &$key => &$value) {
-            $key = base64_decode($key);
+        $result = [];
 
+        foreach ($data as $key => $value) {
             if (is_array($value)) {
-                $value = $this->decodeData($value);
+                $decodedValue = $this->decodeData($value);
             } else {
-                $value = base64_decode($value);
+                $decodedValue = base64_decode($value);
             }
+
+            $result[base64_decode($key)] = $decodedValue;
         }
 
-        return $data;
+        return $result;
     }
 
     /**
