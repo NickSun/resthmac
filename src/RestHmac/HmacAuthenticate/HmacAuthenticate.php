@@ -38,6 +38,7 @@ class HmacAuthenticate
     {
         // Message to be hashed
         $string = $data['timestamp'] .
+            $data['method'] .
             $data['firstname'] .
             $data['lastname'] .
             $data['email'] .

@@ -60,8 +60,49 @@ class Request
                 break;
         }
 
+        $data = $this->decodeData($data);
+
+        $data['method'] = $_SERVER['REQUEST_METHOD'];
         $data['timestamp'] = $this->getHeader('X-Timestamp');
         $data['hash'] = $this->getHeader('X-Hash');
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function encodeData(array $data)
+    {
+        foreach ($data as &$key => &$value) {
+            $key = base64_encode($key);
+
+            if (is_array($value)) {
+                $value = $this->encodeData($value);
+            } else {
+                $value = base64_encode($value);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $data
+     * @return array
+     */
+    public function decodeData(array $data)
+    {
+        foreach ($data as &$key => &$value) {
+            $key = base64_decode($key);
+
+            if (is_array($value)) {
+                $value = $this->decodeData($value);
+            } else {
+                $value = base64_decode($value);
+            }
+        }
 
         return $data;
     }
