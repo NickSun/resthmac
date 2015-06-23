@@ -53,8 +53,12 @@ class HmacAuthenticate
         ksort($data);
 
         foreach ($data as $key => $value) {
+            if ('hash' === $key) {
+                continue;
+            }
+
             if (is_array($value)) {
-                $this->getDataAsString($value);
+                $string .= $this->getDataAsString($value);
             } else {
                 $string .= $value;
             }
