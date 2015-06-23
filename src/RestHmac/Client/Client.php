@@ -46,6 +46,7 @@ class Client
         $this->headers['X-Timestamp'] = $timestamp;
         $data['timestamp'] = $timestamp;
         $data['method'] = 'POST';
+        $data['clientId'] = $this->headers['X-Client-Id'];
 
         $this->headers['X-Hash'] = $this->hmac->generate($data);
 
@@ -53,10 +54,6 @@ class Client
 
         $response = $this->client->post('user', ['headers'  => $this->headers, 'form_params' => $postData]);
 
-        if (202 == $response->getStatusCode()) {
-            return true;
-        }
-
-        return false;
+        return 202 === $response->getStatusCode();
     }
 }

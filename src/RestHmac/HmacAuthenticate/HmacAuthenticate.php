@@ -37,13 +37,29 @@ class HmacAuthenticate
     public function generate(array $data)
     {
         // Message to be hashed
-        $string = $data['timestamp'] .
-            $data['method'] .
-            $data['firstname'] .
-            $data['lastname'] .
-            $data['email'] .
-            implode(',', $data['images']);
+        $string = $this->getDataAsString($data);
 
         return base64_encode(hash_hmac('sha256', $string, $this->privateKey, true));
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     */
+    protected function getDataAsString(array $data)
+    {
+        $string = '';
+
+        ksort($data);
+
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
+                $this->getDataAsString($value);
+            } else {
+                $string .= $value;
+            }
+        }
+
+        return $string;
     }
 }

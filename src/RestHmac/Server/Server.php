@@ -14,21 +14,33 @@ class Server
 
     /** @var HmacAuthenticate */
     protected $hmac;
+
+    /** @var Request */
     protected $request;
 
+    /**
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
     }
 
+    /**
+     * @param string $privateKey
+     */
     public function setPrivateKey($privateKey)
     {
         $this->hmac = new HmacAuthenticate($privateKey);
     }
 
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function checkAccess()
     {
-        if (is_null($this->hmac)) {
+        if (null === $this->hmac) {
             throw new \Exception('Private key does not set.');
         }
 
@@ -40,10 +52,6 @@ class Server
 
         $hash = $this->hmac->generate($data);
 
-        if ($hash !== $data['hash']) {
-            return false;
-        }
-
-        return true;
+        return $hash === $data['hash'];
     }
 }

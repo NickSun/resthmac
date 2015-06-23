@@ -65,6 +65,7 @@ class Request
         $data['method'] = $_SERVER['REQUEST_METHOD'];
         $data['timestamp'] = $this->getHeader('X-Timestamp');
         $data['hash'] = $this->getHeader('X-Hash');
+        $data['clientId'] = $this->getHeader('X-Client-Id');
 
         return $data;
     }
@@ -94,7 +95,7 @@ class Request
      * @param array $data
      * @return array
      */
-    public function decodeData(array $data)
+    protected function decodeData(array $data)
     {
         $result = [];
 
@@ -119,7 +120,7 @@ class Request
         $headers = [];
 
         foreach ($_SERVER as $name => $value) {
-            if (substr($name, 0, 5) == 'HTTP_') {
+            if (substr($name, 0, 5) === 'HTTP_') {
                 $headers[str_replace(' ', '-', ucwords(strtolower(str_replace('_', ' ', substr($name, 5)))))] = $value;
             }
         }
