@@ -34,6 +34,28 @@ class Client
     }
 
     /**
+     * @param $postData
+     * @return bool
+     */
+    public function registerUser($postData)
+    {
+        $data = $postData;
+        $timestamp = time();
+        $this->headers['X-Timestamp'] = $timestamp;
+        $data['timestamp'] = $timestamp;
+        $data['method'] = 'POST';
+        $data['clientId'] = $this->headers['X-Client-Id'];
+
+        $this->headers['X-Hash'] = $this->hmac->generate($data);
+
+        $postData = $this->request->encodeData($postData);
+
+        $response = $this->client->post('user', ['headers'  => $this->headers, 'form_params' => $postData]);
+
+        return 202 === $response->getStatusCode();
+    }
+
+    /**
      * @param array $data
      * @throws \RuntimeException
      * @return \Psr\Http\Message\ResponseInterface
