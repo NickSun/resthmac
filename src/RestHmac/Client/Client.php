@@ -11,21 +11,19 @@ use RestHmac\Request\Request;
 class Client
 {
     /** @var \GuzzleHttp\Client */
-    protected $client;
-
-    /** @var HmacAuthenticate */
-    protected $hmac;
-
+    private $client;
     /** @var array */
-    protected $headers;
-
+    private $headers;
+    /** @var HmacAuthenticate */
+    private $hmac;
     /** @var Request */
-    protected $request;
+    private $request;
 
     /**
-     * @param $apiEndPoint
-     * @param $publicKey
-     * @param $privateKey
+     * @param string $apiEndPoint
+     * @param string $publicKey
+     * @param string $privateKey
+     * @throws \Exception
      */
     public function __construct($apiEndPoint, $publicKey, $privateKey)
     {
@@ -36,24 +34,65 @@ class Client
     }
 
     /**
-     * @param $postData
-     * @return bool
+     * @param array $data
+     * @throws \RuntimeException
+     * @return \Psr\Http\Message\ResponseInterface
      */
-    public function registerUser($postData)
+    public function get(array $data)
     {
-        $data = $postData;
+        $this->addHashHeader($data, 'GET');
+        $response = $this->client->get('?' . http_build_query($data), ['headers' => $this->headers]);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new \RuntimeException(
+                'Expected status code 200, got ' . $response->getStatusCode() . PHP_EOL .
+                $response->getBody()->getContents()
+            );
+        }
+
+        return $response;
+    }
+
+    /**
+     * @param array  $data
+     * @param string $method
+     */
+    private function addHashHeader(array $data, $method)
+    {
         $timestamp = time();
         $this->headers['X-Timestamp'] = $timestamp;
-        $data['timestamp'] = $timestamp;
-        $data['method'] = 'POST';
-        $data['clientId'] = $this->headers['X-Client-Id'];
+        $this->headers['X-Hash'] = $this->hmac->generate(
+            array_merge(
+                $data,
+                [
+                    'timestamp' => $timestamp,
+                    'method'    => $method,
+                    'clientId'  => $this->headers['X-Client-Id']
+                ]
+            )
+        );
+    }
 
-        $this->headers['X-Hash'] = $this->hmac->generate($data);
+    /**
+     * @param array $data
+     * @throws \RuntimeException
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function post(array $data)
+    {
+        $this->addHashHeader($data, 'POST');
+        $response = $this->client->post('', [
+            'headers'     => $this->headers,
+            'form_params' => $this->request->encodeData($data)
+        ]);
 
-        $postData = $this->request->encodeData($postData);
+        if ('2' !== substr($response->getStatusCode(), 0, 1)) {
+            throw new \RuntimeException(
+                'Unexpected status code ' . $response->getStatusCode() . PHP_EOL .
+                $response->getBody()->getContents()
+            );
+        }
 
-        $response = $this->client->post('user', ['headers'  => $this->headers, 'form_params' => $postData]);
-
-        return 202 === $response->getStatusCode();
+        return $response;
     }
 }
