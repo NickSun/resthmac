@@ -10,7 +10,7 @@ use RestHmac\Request\Request;
  */
 class Server
 {
-    const LAG = 180;
+    const LAG = 900;
 
     /** @var HmacAuthenticate */
     protected $hmac;
