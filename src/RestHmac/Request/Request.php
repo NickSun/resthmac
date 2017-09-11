@@ -37,10 +37,11 @@ class Request
 
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'POST':
-                $data = $_POST;
+                $data = $this->decodeData($_POST);
                 break;
             case 'GET':
                 $data = $_GET;
+                unset($data['function']);
                 break;
             case 'PUT':
             case 'DELETE':
@@ -59,8 +60,6 @@ class Request
                 $data = [];
                 break;
         }
-
-        $data = $this->decodeData($data);
 
         $data['method'] = $_SERVER['REQUEST_METHOD'];
         $data['timestamp'] = $this->getHeader('X-Timestamp');

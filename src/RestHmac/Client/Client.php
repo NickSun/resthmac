@@ -56,6 +56,31 @@ class Client
     }
 
     /**
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function getStatistic()
+    {
+        $timestamp = time();
+        $this->headers['X-Timestamp'] = $timestamp;
+        $data['timestamp'] = $timestamp;
+        $data['method'] = 'GET';
+        $data['clientId'] = $this->headers['X-Client-Id'];
+
+        $this->headers['X-Hash'] = $this->hmac->generate($data);
+
+        $response = $this->client->get('statistic', ['headers'  => $this->headers]);
+
+        if (200 !== $response->getStatusCode()) {
+            throw new \RuntimeException(
+                'Expected status code 200, got ' . $response->getStatusCode() . PHP_EOL .
+                $response->getBody()->getContents()
+            );
+        }
+
+        return $response;
+    }
+
+    /**
      * @param array $data
      * @throws \RuntimeException
      * @return \Psr\Http\Message\ResponseInterface
